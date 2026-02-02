@@ -1,8 +1,10 @@
-import streamlit as st
 import sys
 import os
+import streamlit as st
 
-# Add backend folder to path dynamically (no __init__.py needed)
+# ===========================
+# Backend import (no __init__.py needed)
+# ===========================
 sys.path.append(
     os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend'))
 )
@@ -30,6 +32,11 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+st.caption(
+    "This model uses study habits, sleep patterns, and academic history "
+    "to estimate performance."
+)
+
 st.divider()
 
 # ===========================
@@ -38,42 +45,25 @@ st.divider()
 st.sidebar.header("🧮 Input Features")
 
 hours_studied = st.sidebar.slider(
-    "Hours Studied per Day",
-    min_value=0.0,
-    max_value=20.0,
-    value=5.0,
-    step=0.5
+    "Hours Studied per Day", 0.0, 20.0, 5.0, 0.5
 )
 
 previous_scores = st.sidebar.slider(
-    "Previous Academic Score",
-    min_value=0.0,
-    max_value=100.0,
-    value=50.0,
-    step=1.0
+    "Previous Academic Score", 0.0, 100.0, 50.0, 1.0
 )
 
 extracurricular = st.sidebar.radio(
-    "Extracurricular Activities",
-    ["No", "Yes"]
+    "Extracurricular Activities", ["No", "Yes"]
 )
 
 sleep_hours = st.sidebar.slider(
-    "Sleep Hours per Day",
-    min_value=0.0,
-    max_value=12.0,
-    value=7.0,
-    step=0.5
+    "Sleep Hours per Day", 0.0, 12.0, 7.0, 0.5
 )
 
 sample_questions = st.sidebar.number_input(
-    "Sample Question Papers Practiced",
-    min_value=0,
-    max_value=50,
-    value=10
+    "Sample Question Papers Practiced", 0, 50, 10
 )
 
-# Convert categorical input
 extracurricular_val = 1 if extracurricular == "Yes" else 0
 
 features = [
@@ -85,20 +75,21 @@ features = [
 ]
 
 # ===========================
-# Main Content
+# Input Summary
 # ===========================
 st.subheader("📌 Selected Inputs")
 
-col1, col2 = st.columns(2)
+with st.container(border=True):
+    col1, col2 = st.columns(2)
 
-with col1:
-    st.write(f"**Hours Studied:** {hours_studied}")
-    st.write(f"**Previous Score:** {previous_scores}")
-    st.write(f"**Extracurricular:** {extracurricular}")
+    with col1:
+        st.write(f"**Hours Studied:** {hours_studied}")
+        st.write(f"**Previous Score:** {previous_scores}")
+        st.write(f"**Extracurricular:** {extracurricular}")
 
-with col2:
-    st.write(f"**Sleep Hours:** {sleep_hours}")
-    st.write(f"**Sample Papers Practiced:** {sample_questions}")
+    with col2:
+        st.write(f"**Sleep Hours:** {sleep_hours}")
+        st.write(f"**Sample Papers Practiced:** {sample_questions}")
 
 st.divider()
 
@@ -107,7 +98,8 @@ st.divider()
 # ===========================
 if st.button("🔮 Predict Performance", use_container_width=True):
     try:
-        prediction = predict(features)
+        with st.spinner("Predicting performance..."):
+            prediction = float(predict(features))
 
         st.success("Prediction Successful ✅")
 
@@ -117,8 +109,8 @@ if st.button("🔮 Predict Performance", use_container_width=True):
         )
 
         st.info(
-            "💡 **Tip:** Consistent study hours, good sleep, and practice "
-            "significantly improve performance."
+            "💡 Consistent study hours, proper sleep, and regular practice "
+            "can significantly improve academic performance."
         )
 
     except Exception as e:
@@ -131,7 +123,7 @@ if st.button("🔮 Predict Performance", use_container_width=True):
 st.divider()
 st.markdown(
     "<p style='text-align:center; font-size:12px;'>"
-    "Built with ❤️ using PyTorch & Streamlit | Deployed on Render"
+    "Built with ❤️ using Scikit-Learn & Streamlit | Deployed on Render"
     "</p>",
     unsafe_allow_html=True
 )
